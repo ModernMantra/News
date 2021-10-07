@@ -46,8 +46,11 @@ struct NetworkService {
                     return Fail(error: NetworkError.code((response as! HTTPURLResponse).statusCode)).eraseToAnyPublisher()
                 }
                 
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+                
                 return Just(data)
-                    .decode(type: Response<Article>.self, decoder: JSONDecoder())
+                    .decode(type: Response<Article>.self, decoder: decoder)
                     .mapError{ _ in NetworkError.decoding }
                     .eraseToAnyPublisher()
             }

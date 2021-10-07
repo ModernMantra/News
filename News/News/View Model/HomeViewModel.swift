@@ -24,6 +24,7 @@ enum DataLoadingState {
 class HomeViewModel: ObservableObject {
     
     @Published private(set) var state: DataLoadingState = .none
+    
     private(set) var articles = [Article]()
     private(set) var cancellables = Set<AnyCancellable>()
     
@@ -34,11 +35,12 @@ class HomeViewModel: ObservableObject {
             switch result {
             case .failure(let error):
                 self.state = .error(error)
+                
             case .finished:
                 self.state = .completed(articles: self.articles)
             }
         } receiveValue: { response in
-            self.articles = response.data
+            self.articles = response.articles
         }
         
         self.cancellables.insert(cancellable)

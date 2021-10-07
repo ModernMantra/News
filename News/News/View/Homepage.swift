@@ -8,13 +8,41 @@
 import SwiftUI
 
 struct Homepage: View {
+    
+    @StateObject var viewModel = HomeViewModel()
+    
+    @State private var showingAlert = false
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
-
-struct Homepage_Previews: PreviewProvider {
-    static var previews: some View {
-        Homepage()
+        Group {
+            switch viewModel.state {
+            case .loading:
+                ProgressView()
+                
+            case .error(let error):
+                VStack {
+                    Spacer()
+                    Text(error.localizedDescription)
+                    Button("Retry") {
+                        viewModel.getArticles()
+                    }
+                    Spacer()
+                }
+                
+            case .completed(let articles):
+                NavigationView {
+                    List(articles) { article in
+                        NavigationLink(destination: ArticleDetailsView(article: article)) {
+                            ArticleView(article: article)
+                        }
+                    }.navigationTitle(Text("Headlines"))
+                }
+                
+            case .none:
+                EmptyView()
+            }
+        }.onAppear(perform: {
+            viewModel.getArticles()
+        })
     }
 }

@@ -13,21 +13,26 @@ struct Response<T: Codable>: Codable {
     
     let status: String
     let totalResults: Int
-    let data: [T]
+    let articles: [T]
     
 }
 
 // MARK: - Article -
 
-struct Article: Codable {
+struct Article: Codable, Identifiable {
+    
+    var id: String {
+        url
+    }
     
     let source: Source
     let author: String?
-    let title, articleDescription: String
+    let title: String
+    let articleDescription: String
     let url: String
-    let urlToImage: String
+    let urlToImage: String?
     let publishedAt: Date
-    let content: String
+    let content: String?
 
     enum CodingKeys: String, CodingKey {
         case source, author, title
